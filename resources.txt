@@ -1,0 +1,18 @@
+Tensorflow tutorial vids:
+
+    Coding Train:
+    https://www.youtube.com/watch?v=F4WWukTWoXY
+
+    Siraj:
+    //Siraj makes a model that trains apple stock.
+    https://www.youtube.com/watch?v=5Uw1iSwvHH8 
+    
+Articles:
+
+    Hackernoon:
+    https://hackernoon.com/forecasting-market-movements-using-tensorflow-fb73e614cd06
+
+    https://hackernoon.com/the-self-learning-quant-d3329fcc9915
+
+    Misc:
+    https://medium.com/mlreview/a-simple-deep-learning-model-for-stock-price-prediction-using-tensorflow-30505541d877
