@@ -3,6 +3,8 @@ Tensorflow tutorial vids:
     Coding Train:
     https://www.youtube.com/watch?v=F4WWukTWoXY
 
+    https://www.youtube.com/watch?v=rw_LVFpIzJg
+
     Siraj:
     //Siraj makes a model that trains apple stock.
     https://www.youtube.com/watch?v=5Uw1iSwvHH8 

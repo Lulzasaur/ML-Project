@@ -8,13 +8,31 @@
     
 </head>
 <body>
-  <div>
-    <form>
-      Ticker<input> 
-      Epochs<input> 
-      <button>Submit</button>
-    </form>
-  </div>
+    <div id="new-form">
+      <form class="form-horizontal">
+        <div class="form-group row">
+          <label for="ticker" class="pl-4 col-sm-1 form-label">Ticker</label>
+          <div class="col-sm-6">
+            <input required type="text" class="form-control" id="ticker"
+                   autocomplete="off">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="epochs" class="pl-4 col-sm-1 form-label">Epochs</label>
+          <div class="col-sm-6">
+            <input required type="text" class="form-control" id="epochs"
+                   autocomplete="off">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-primary">submit</button>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div id='tf-predictions'>
+    </div>
 </body>
 <script
   src="https://code.jquery.com/jquery-3.3.1.js"
@@ -23,7 +41,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.13.0"> </script>
 
-<script src="static/scratchml.js"></script>
+<script src="static/ml.js"></script>
 
 
 </html>
