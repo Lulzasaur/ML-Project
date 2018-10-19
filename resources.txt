@@ -8,6 +8,10 @@ Tensorflow tutorial vids:
     Siraj:
     //Siraj makes a model that trains apple stock.
     https://www.youtube.com/watch?v=5Uw1iSwvHH8 
+
+    Sentdex:
+    https://www.youtube.com/watch?v=bOwKPsCj2GQ
+
     
 Articles:
 
