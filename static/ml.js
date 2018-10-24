@@ -16,46 +16,44 @@ async function train(epo,xs,ys){
 
 async function getStockInfo(ticker,epochs){
   let stockInfo = await $.get(`${BASE_URL}/stock/${ticker}/chart/6m`, function(response) {
-    let dates = response.map(r => Date.parse(r.date))
-    let prices = response.map(r => r.close)
-    let tdates = tf.tensor1d(dates)
-    let tprices = tf.tensor1d(prices)
-
-    tdates.print()
-    tprices.print()
-
-    model.add(tf.layers.conv1d({
-      inputShape: [dates.length, 1],
-      kernelSize: 10,
-      filters: 8,
-      strides: 2,
-      activation: 'relu',
-      kernelInitializer: 'VarianceScaling'
-    }))
+    let dateAndClose = response.map(r => [[Date.parse(r.date)],[r.close], [response.length]])
+    console.log(dateAndClose)
+    let tDateAndClose = tf.tensor3d(dateAndClose)
     
-    model.add(tf.layers.conv1d({
-      inputShape: [dates.length, 1],
-      kernelSize: 10,
-      filters: 8,
-      strides: 2,
-      activation: 'relu',
-      kernelInitializer: 'VarianceScaling'
-    }))
-    
-    model.add(tf.layers.maxPooling1d({
-      poolSize: [23],
-      strides: [2]
-    }))
+    console.log(tDateAndClose.shape)
 
+    // const lstm = tf.layers.lstm({units: 8, returnSequences: true});
+
+    // // Create an input with 10 time steps.
+    // const input = tf.input({shape: [10, 20]});
+    // const output = lstm.apply(input);
+    
+    // console.log(JSON.stringify(output.shape));
+
+    //Juan model
+    const lstm = tf.layers.lstm({units: 8, returnSequences: true});
+    const input = tf.input({shape: tDateAndClose.shape })
+    const output = lstm.apply(input)
+
+    console.log(lstm)
+    console.log(input)
+    console.log('CHECK THIS OUT', JSON.stringify(output.shape));
+    // model.add(tf.layers.lstm({}))
+
+
+    model.add(lstm)
+    
+    // model.add(lstm)
+  
     model.add(tf.layers.dense({
-      units: 1,
-      kernelInitializer: 'VarianceScaling',
+      units: 2,
       activation: 'softmax'
     }))
     
     model.compile({optimizer: 'sgd', loss: 'binaryCrossentropy', lr: 0.1})
-    
-    train(epochs,tdates,tprices)
+    model.fit({batchSize: 3,
+      epochs: 10})
+    train(epochs,tDateAndClose)
   });
 
 }
