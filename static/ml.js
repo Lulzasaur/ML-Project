@@ -15,38 +15,69 @@ async function train(epo,xs,ys){
 }
 
 async function getStockInfo(ticker,epochs){
+  //get data
   let stockInfo = await $.get(`${BASE_URL}/stock/${ticker}/chart/6m`, function(response) {
-    let dateAndClose = response.map(r => [[Date.parse(r.date)],[r.close], [response.length]])
-    console.log(dateAndClose)
-    let tDateAndClose = tf.tensor3d(dateAndClose)
-    
-    console.log(tDateAndClose.shape)
 
-    // const lstm = tf.layers.lstm({units: 8, returnSequences: true});
+    //prep data for machine learning...get array with just date and close
+    let dateAndClose = response.map(r => [[Date.parse(r.date)],[r.close]])  
 
-    // // Create an input with 10 time steps.
-    // const input = tf.input({shape: [10, 20]});
-    // const output = lstm.apply(input);
-    
-    // console.log(JSON.stringify(output.shape));
+    //if close in next 7 days is greater than current day close by 1%, assign a value of 1
+    //if close in next 7 days is less than current day close by 1%, assign a value of -1
+    //otherwise assign value of 0, unchanged. 
+    for(let i=0;i<dateAndClose.length-7;i++){
+      let futureClosePrice = dateAndClose[i+7][1],
+          currentClosePrice = dateAndClose[i][1],
+          percentClose = (futureClosePrice - currentClosePrice)/currentClosePrice;
 
-    //Juan model
-    const lstm = tf.layers.lstm({units: 8, returnSequences: true});
-    const input = tf.input({shape: tDateAndClose.shape })
-    const output = lstm.apply(input)
+      if(percentClose >= 0.01){
+        dateAndClose[i].push([1])
+      } else if (percentClose <= -0.01){
+        dateAndClose[i].push([-1])
+      } else {
+        dateAndClose[i].push([0])
+      }
+    }
+    //lol gross.
+    dateAndClose.pop()
+    dateAndClose.pop()
+    dateAndClose.pop()
+    dateAndClose.pop()
+    dateAndClose.pop()
+    dateAndClose.pop()
+    dateAndClose.pop()
 
-    console.log(lstm)
-    console.log(input)
-    console.log('CHECK THIS OUT', JSON.stringify(output.shape));
-    // model.add(tf.layers.lstm({}))
+    let tDateAndClose = tf.tensor(dateAndClose)
 
+    model.add(tf.layers.conv1d({
+      inputShape: [tDateAndClose.shape],
+      kernelSize: 100,
+      filters: 8,
+      strides: 2,
+      activation: 'relu',
+      kernelInitializer: 'VarianceScaling'
+    }))
 
-    model.add(lstm)
-    
-    // model.add(lstm)
-  
+    model.add(tf.layers.maxPooling1d({
+      poolSize: [500],
+      strides: [2]
+    }))
+
+    model.add(tf.layers.conv1d({
+      kernelSize: 5,
+      filters: 16,
+      strides: 1,
+      activation: 'relu',
+      kernelInitializer: 'VarianceScaling'
+    }))
+
+    model.add(tf.layers.maxPooling1d({
+      poolSize: [100],
+      strides: [2]
+    }))
+
     model.add(tf.layers.dense({
-      units: 2,
+      units: 10,
+      kernelInitializer: 'VarianceScaling',
       activation: 'softmax'
     }))
     
