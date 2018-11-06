@@ -18,10 +18,10 @@ import keras.backend as K
 import requests
 
 BASE_URL = 'https://api.iextrading.com/1.0'
-ticker = 'SPY'
+ticker = 'AAPL'
 FUTURE_PERIOD_PREDICT = 5
 SEQ_LEN=10
-EPOCHS=60
+EPOCHS=70
 BATCH_SIZE=20
 
 #function to create the labels for the data.
@@ -91,7 +91,7 @@ df = pd.DataFrame(data=resp.json())
 #set date as index.
 df.set_index('date',inplace=True)
 
-df = df[['volume','close']]
+df = df[['volume','high','low','vwap','close']]
 
 df['future'] = df['close'].shift(-FUTURE_PERIOD_PREDICT)
 df['target'] = list(map(classify, df['close'], df['future']))
@@ -99,9 +99,7 @@ df['target'] = list(map(classify, df['close'], df['future']))
 df.dropna(inplace=True)
 
 times = sorted(df.index.values)
-last_5pct = sorted(df.index.values)[-int(0.10*len(times))]
-
-
+last_5pct = sorted(df.index.values)[-int(0.05*len(times))]
 
 validation_main_df = df[(df.index >= last_5pct)]
 main_df = df[(df.index < last_5pct)]
@@ -154,3 +152,4 @@ history = model.fit(
 score = model.evaluate(validation_x, validation_y, verbose=0)
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
+print('Score:', score)
